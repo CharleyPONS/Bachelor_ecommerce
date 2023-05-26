@@ -1,0 +1,31 @@
+<h3 class="title">Le produit a bien été ajouté au panier!</h3>
+<div fxLayout="column">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+    <div>
+      <img
+        class="image-wrapper"
+        [src]="productSelected?.photo"
+        alt="photo du produit"
+      />
+    </div>
+    <div fxLayout="column">
+      <p>
+        Nom du produit: <strong>{{ productSelected?.label }}</strong>
+      </p>
+      <p>
+        Prix du produit: <strong>{{ productSelected?.cost }}€</strong>
+      </p>
+      <p *ngIf="productSelected?.amount">
+        Quantité: <strong>{{ productSelected?.amount }}</strong>
+      </p>
+    </div>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+    <button mat-button mat-stroked-button color="warn" (click)="close()">
+      Continuer mes achats
+    </button>
+    <button mat-button mat-raised-button color="primary" (click)="goCart()">
+      Panier
+    </button>
+  </div>
+</div>

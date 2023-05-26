@@ -1,0 +1,15 @@
+<mat-card>
+  <app-registration
+    [isOnOrder]="true"
+    (connect)="isConnected($event)"
+  ></app-registration>
+</mat-card>
+<button
+  style="margin-top: 8px !important"
+  mat-button
+  mat-stroked-button
+  color="warn"
+  (click)="close()"
+>
+  Fermer
+</button>

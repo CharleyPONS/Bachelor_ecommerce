@@ -1,0 +1,17 @@
+<h2>
+  Panier <span style="font-size: 22px">({{ numberItem }}): {{ total }}€</span>
+</h2>
+<cart-view
+  [display]="display"
+  [images]="showImages"
+  [customEmptyContent]="useCustom"
+  [nameHeaderText]="nameHeaderText"
+  [priceHeaderText]="priceHeaderText"
+  [quantityHeaderText]="quantityHeaderText"
+  [totalFooterText]="totalFooterText"
+  [shippingFooterText]="shippingFooterText"
+  [taxFooterText]="false"
+  [emptyText]="emptyText"
+>
+  <h1 style="text-align: center">Votre panier est vide</h1>
+</cart-view>

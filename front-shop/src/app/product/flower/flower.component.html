@@ -1,0 +1,15 @@
+<h2 style="text-align: center">Fleurs de CBD</h2>
+<app-product-sort-by
+  [product]="products"
+  (productSort)="productOrder($event)"
+></app-product-sort-by>
+<div
+  fxLayout="row wrap"
+  fxLayoutAlign.gt-md="space-between center"
+  fxLayoutAlign.lt-md="space-around center"
+  fxLayoutGap="15px grid"
+>
+  <div *ngFor="let product of products">
+    <app-product-wrapper [product]="product"></app-product-wrapper>
+  </div>
+</div>

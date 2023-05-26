@@ -1,0 +1,431 @@
+<mat-vertical-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="isConnected" color="primary">
+    <div fxLayout="row">
+      <div>
+        <p>Vous avez déjà un compte?</p>
+      </div>
+      <div class="app-margin-lt-8 app-margin-tp-8">
+        <button
+          mat-button
+          mat-raised-button
+          color="primary"
+          (click)="connectModal()"
+        >
+          Connectez-vous
+        </button>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div>
+        <p>Vous êtes pressé?</p>
+      </div>
+      <div class="app-margin-lt-8 app-margin-tp-8">
+        <app-facebook-connection
+          [isOnOrder]="true"
+          (connectionProcess)="isConnectedSSO($event)"
+        ></app-facebook-connection>
+      </div>
+    </div>
+    <div fxLayout="row" *ngIf="!isConnected">
+      <div class="app-margin-tp-12"><mat-icon>arrow_circle_down</mat-icon></div>
+
+      <div>
+        <p>Sinon Inscrivez vous directement ci-dessous</p>
+      </div>
+      <div class="app-margin-tp-12"><mat-icon>arrow_circle_down</mat-icon></div>
+    </div>
+    <form [formGroup]="connectionForm" *ngIf="!isConnected">
+      <ng-template matStepLabel>Connexion/Inscription</ng-template>
+      <div
+        fxFlexAlign.gt-xs="column"
+        fxLayoutGap="24px"
+        fxLayoutGap.sm="12px"
+        fxLayoutGap.xs="8px"
+      >
+        <mat-form-field color="primary">
+          <mat-label>Adresse e-mail</mat-label>
+          <input
+            matInput
+            [placeholder]="'Adresse e-mail'"
+            formControlName="email"
+            required
+          />
+          <mat-error
+            *ngIf="
+              connectionForm.get('email').errors &&
+              connectionForm.get('email').touched
+            "
+            >Votre email n'est pas valide</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Mot de passe</mat-label>
+          <input
+            matInput
+            placeholder="Password"
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+            required
+          />
+          <mat-icon matSuffix class="icon-selector" (click)="hide = !hide">{{
+            hide ? "visibility_off" : "visibility"
+          }}</mat-icon>
+          <mat-error
+            *ngIf="
+              connectionForm.get('password').errors &&
+              connectionForm.get('password').touched
+            "
+            >Votre mot de passe doit comporter au moins 6 caractères</mat-error
+          >
+        </mat-form-field>
+        <mat-card *ngIf="emailAlreadyUse" style="background-color: #ff8d79" ;>
+          Cette adresse e-mail est déjà utilisé, veuillez vous inscrire avec une
+          nouvelle adresse.
+        </mat-card>
+      </div>
+    </form>
+    <mat-card class="card-valid" *ngIf="isConnected">
+      Vous êtes déjà connecté
+    </mat-card>
+    <div>
+      <button
+        mat-button
+        mat-raised-button
+        matStepperNext
+        [disabled]="
+          (connectionForm.invalid || connectionForm.disabled) && !isConnected
+        "
+        (click)="validateConnectionForm()"
+        color="primary"
+      >
+        Suivant
+      </button>
+    </div>
+  </mat-step>
+  <mat-step
+    [stepControl]="addressForm"
+    [errorMessage]="'Veuillez remplir le formulaire avec votre adress'"
+  >
+    <form [formGroup]="addressForm">
+      <ng-template matStepLabel>Votre adresse</ng-template>
+      <div
+        fxFlexAlign.gt-xs="column"
+        fxLayoutGap="24px"
+        fxLayoutGap.sm="12px"
+        fxLayoutGap.xs="8px"
+      >
+        <div
+          fxLayout.gt-sm="row"
+          fxLayoutAlign.gt-sm="space-between"
+          fxLayout="column"
+        >
+          <mat-form-field>
+            <mat-label>Prénom</mat-label>
+            <input
+              matInput
+              [placeholder]="'Votre prénom'"
+              formControlName="surname"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addressForm.get('surname').errors &&
+                addressForm.get('surname').touched
+              "
+              >Ce champ est requis</mat-error
+            >
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Nom</mat-label>
+            <input
+              matInput
+              [placeholder]="'Votre nom'"
+              formControlName="name"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addressForm.get('name').errors &&
+                addressForm.get('name').touched
+              "
+              >Ce champ est requis</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div
+          fxLayout.gt-sm="row"
+          fxLayoutAlign.gt-sm="space-between"
+          fxLayout="column"
+        >
+          <mat-form-field>
+            <mat-label>Adresse</mat-label>
+            <input
+              matInput
+              [placeholder]="'40 rue des champs'"
+              formControlName="address"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addressForm.get('address').errors &&
+                addressForm.get('address').touched
+              "
+              >Ce champ est requis</mat-error
+            >
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Code postal</mat-label>
+            <input
+              matInput
+              [placeholder]="'49200'"
+              formControlName="postalCode"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addressForm.get('postalCode').errors &&
+                addressForm.get('postalCode').touched
+              "
+              >Ce champ est requis</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div
+          fxLayout.gt-sm="row"
+          fxLayoutAlign.gt-sm="space-between"
+          fxLayout="column"
+        >
+          <mat-form-field>
+            <mat-label>Ville</mat-label>
+            <input
+              matInput
+              [placeholder]="'Lille'"
+              formControlName="town"
+              required
+            />
+            <mat-error
+              *ngIf="
+                addressForm.get('town').errors &&
+                addressForm.get('town').touched
+              "
+              >Ce champ est requis</mat-error
+            >
+          </mat-form-field>
+          <mat-select-country
+            formControlName="country"
+            appearance="outline"
+            label="Pays"
+            [countries]="predefinedCountries"
+            [itemsLoadSize]="5"
+          >
+            <mat-error
+              *ngIf="
+                addressForm.get('country').errors &&
+                addressForm.get('country').touched
+              "
+              >Ce champ est requis</mat-error
+            >
+          </mat-select-country>
+        </div>
+      </div>
+    </form>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <button mat-button mat-stroked-button matStepperPrevious color="warn">
+        Précédent
+      </button>
+      <button
+        mat-button
+        mat-raised-button
+        matStepperNext
+        [disabled]="addressForm.invalid || addressForm.disabled"
+        (click)="validateAddressForm()"
+        color="primary"
+      >
+        Suivant
+      </button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="transporterForm">
+    <ng-template matStepLabel>Mode de livraison</ng-template>
+    <form [formGroup]="transporterForm">
+      <mat-radio-group formControlName="transporter">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <mat-card *ngFor="let transporter of transporter">
+            <div
+              fxLayout.gt-sm="row"
+              fxLayoutAlign.gt-sm="space-between center"
+            >
+              <mat-radio-button value="{{ transporter.type }}"
+                ><div
+                  fxLayout.gt-sm="row"
+                  fxLayoutAlign.gt-sm="space-between center"
+                >
+                  <img
+                    style="width: 50px; height: auto"
+                    *ngIf="transporter.type === 'LAPOSTE'"
+                    src="../../../assets/Logo-laposte.png"
+                    alt=""
+                  /><img
+                    style="width: 70px; height: auto; margin-right: 4px"
+                    *ngIf="transporter.type === 'CHRONOPOST'"
+                    src="../../../assets/3314px-Colissimo_Logo.svg.png"
+                    alt=""
+                  />
+                  Livraison avec {{ transporter.type }} en lettre suivie ({{
+                    transporter.delay
+                  }})
+                </div></mat-radio-button
+              >
+              <span
+                >Prix:
+                <strong
+                  >{{
+                    total > configuration?.minPriceFreeShipment
+                      ? 0
+                      : transporter.basePrice
+                  }}€</strong
+                ></span
+              >
+            </div>
+          </mat-card>
+        </div>
+        <mat-error
+          *ngIf="
+            transporterForm.get('transporter').errors &&
+            transporterForm.get('transporter').touched
+          "
+          >Ce champ est requis</mat-error
+        >
+      </mat-radio-group>
+    </form>
+    <div fxLayout="row" fxLayoutGap="20px" class="button-transporter">
+      <button mat-button mat-stroked-button matStepperPrevious color="warn">
+        Précédent
+      </button>
+      <button
+        mat-button
+        mat-raised-button
+        matStepperNext
+        [disabled]="transporterForm.invalid || transporterForm.disabled"
+        color="primary"
+      >
+        Suivant
+      </button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Paiement</ng-template>
+    <p class="title">Paiement par carte bancaire</p>
+    <div fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="center">
+      <img
+        src="../../../assets/cb.png"
+        alt=""
+        style="width: 60px; height: auto"
+      />
+      <img
+        src="../../../assets/mastercard-6.svg"
+        alt=""
+        style="width: 60px; height: auto"
+      />
+      <img
+        src="../../../assets/visa-4.svg"
+        alt=""
+        style="width: 60px; height: auto"
+      />
+    </div>
+    <p class="title">Veuillez vérifier vos informations de livraison</p>
+    <div fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-around center">
+      <mat-card>
+        <div fxLayout.gt-sm="column" fxLayoutAlign.gt-sm="space-around">
+          <p class="title">Votre adresse de livraison</p>
+          <span
+            >{{ addressForm.get("surname")?.value }}
+            {{ addressForm.get("name")?.value }}</span
+          >
+          <span class="app-margin-tp-4">{{
+            addressForm.get("address")?.value
+          }}</span>
+          <span class="app-margin-tp-4"
+            >{{ addressForm.get("postalCode")?.value }}
+            {{ addressForm.get("town")?.value }}</span
+          >
+          <span class="app-margin-tp-4">{{
+            addressForm.get("country")?.value?.name
+          }}</span>
+        </div>
+      </mat-card>
+      <mat-card>
+        <div fxLayout.gt-sm="column" fxLayoutAlign.gt-sm="space-around">
+          <p class="title">Votre adresse de Facturation</p>
+          <span class="app-margin-tp-4"
+            >{{ addressForm.get("surname")?.value }}
+            {{ addressForm.get("name")?.value }}</span
+          >
+          <span class="app-margin-tp-4">{{
+            addressForm.get("address")?.value
+          }}</span>
+          <span class="app-margin-tp-4"
+            >{{ addressForm.get("postalCode")?.value }}
+            {{ addressForm.get("town")?.value }}</span
+          >
+          <span>{{ addressForm.get("country")?.value?.name }}</span>
+        </div>
+      </mat-card>
+    </div>
+    <mat-card
+      class="app-margin-tp-8"
+      style="width: 70%; margin: auto; margin-top: 4%"
+    >
+      <form
+        [formGroup]="payForm"
+        id="payment-form"
+        fxLayout="column"
+        fxLayoutAlign="center"
+      >
+        <mat-form-field>
+          <mat-label>Nom sur la carte</mat-label>
+          <input
+            matInput
+            [placeholder]="'Votre nom'"
+            formControlName="name"
+            required
+          />
+        </mat-form-field>
+        <div id="card-element"></div>
+        <button
+          (click)="onPaymentMethod()"
+          style="margin-top: 3%"
+          [disabled]="isDisabled"
+          mat-button
+          mat-raised-button
+          color="primary"
+        >
+          Payer
+        </button>
+        <mat-progress-spinner
+          fxHide="{{ spinnerHidden }}"
+          style="margin: auto; margin-top: 8px"
+          color="primary"
+          [mode]="'indeterminate'"
+          [diameter]="'38'"
+        ></mat-progress-spinner>
+        <mat-card class="card-error" *ngIf="isCardError">
+          {{ cardError }}
+        </mat-card>
+        <mat-card class="card-success" *ngIf="paymentValidate">
+          <p>
+            Votre paiement a été validé, vous recevrez une confirmation par
+            mail.
+          </p>
+          <p>
+            Vous pourrez retrouver toutes les informations de votre commande
+            dans l'onglet 'mon compte'.
+          </p>
+        </mat-card>
+      </form>
+    </mat-card>
+    <button mat-button mat-stroked-button matStepperPrevious color="warn">
+      Précédent
+    </button>
+  </mat-step>
+</mat-vertical-stepper>

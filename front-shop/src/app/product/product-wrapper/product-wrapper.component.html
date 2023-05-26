@@ -1,0 +1,35 @@
+<mat-card class="custom-card">
+  <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5px">
+    <mat-card-header>
+      <h2>{{ product?.name }}</h2>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-divider></mat-divider>
+      <div>
+        <img
+          class="product-image"
+          [src]="product?.imagePath"
+          alt="Ceci est l'image du produit"
+        />
+      </div>
+      <div>
+        <span>Taux de CBD: {{ product?.cbdRate }} %</span>
+      </div>
+      <div>
+        <span>A partir de {{ product?.price?.basePrice }} le gramme.</span>
+      </div>
+    </mat-card-content>
+    <mat-card-actions style="width: 90%">
+      <div>
+        <button
+          mat-raised-button
+          class="product-display-button"
+          color="primary"
+          [routerLink]="product.name"
+        >
+          Voir le produit
+        </button>
+      </div>
+    </mat-card-actions>
+  </div>
+</mat-card>
